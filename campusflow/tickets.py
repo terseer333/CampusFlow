@@ -33,3 +33,32 @@ def validate_title(text):
     if cleaned == "":
         raise ValueError("Title cannot be blank")
     return cleaned
+
+
+def next_ticket_id(tickets):
+    if not tickets:
+        return "T001"
+    highest = max(int(t["id"][1:]) for t in tickets)
+    return f"T{highest + 1:03d}"
+
+
+def create_ticket(tickets, title, category, urgency, affected_users):
+    clean_title = validate_title(title)
+    clean_category = validate_category(category)
+    clean_urgency = validate_urgency(urgency)
+    clean_users = validate_affected_users(str(affected_users))
+
+    priority = calculate_priority(clean_urgency, clean_users)
+
+    ticket = {
+        "id": next_ticket_id(tickets),
+        "title": clean_title,
+        "category": clean_category,
+        "urgency": clean_urgency,
+        "affected_users": clean_users,
+        "priority": priority,
+        "status": "open",
+        "assigned_to": None,
+    }
+    tickets.append(ticket)
+    return ticket
